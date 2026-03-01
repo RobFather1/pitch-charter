@@ -5,33 +5,25 @@ import StrikeZone from '../components/StrikeZone';
 function ChartingPage() {
   const navigate = useNavigate();
 
-  // Load game info from setup page
   const [gameInfo, setGameInfo] = useState(null);
-
-  // Load pitchers from roster
   const [pitchers, setPitchers] = useState([]);
-
-  // Current pitch state
   const [selectedZone, setSelectedZone] = useState(null);
   const [selectedResult, setSelectedResult] = useState('');
   const [pitcher, setPitcher] = useState('');
   const [inning, setInning] = useState('1');
   const [pitchType, setPitchType] = useState('FB');
   const [velocity, setVelocity] = useState('');
+  const [outcome, setOutcome] = useState('');
   const [batterNumber, setBatterNumber] = useState('');
   const [batterName, setBatterName] = useState('');
   const [batterHand, setBatterHand] = useState('RHH');
-
-  // All pitches logged this game
   const [pitches, setPitches] = useState([]);
-
-  // New batter form toggle
+  const [currentBalls, setCurrentBalls] = useState(0);
+  const [currentStrikes, setCurrentStrikes] = useState(0);
   const [showNewBatter, setShowNewBatter] = useState(false);
   const [newBatterNumber, setNewBatterNumber] = useState('');
   const [newBatterName, setNewBatterName] = useState('');
   const [newBatterHand, setNewBatterHand] = useState('RHH');
-
-  // Batters added during this game
   const [batters, setBatters] = useState([]);
 
   useEffect(() => {
@@ -68,6 +60,18 @@ function ChartingPage() {
     setSelectedResult(result);
   };
 
+  const handleNextBatter = () => {
+    setBatterNumber('');
+    setBatterName('');
+    setBatterHand('RHH');
+    setSelectedZone(null);
+    setSelectedResult('');
+    setVelocity('');
+    setOutcome('');
+    setCurrentBalls(0);
+    setCurrentStrikes(0);
+  };
+
   const handleAddBatter = () => {
     if (!newBatterNumber) {
       alert('Please enter a jersey number.');
@@ -82,7 +86,7 @@ function ChartingPage() {
     const updatedBatters = [...batters, newBatter];
     setBatters(updatedBatters);
     localStorage.setItem('currentBatters', JSON.stringify(updatedBatters));
-    setBatterNumber(newBatter.id.toString());
+    setBatterNumber(newBatter.number);
     setBatterName(newBatter.name);
     setBatterHand(newBatter.hand);
     setNewBatterNumber('');
@@ -135,17 +139,24 @@ function ChartingPage() {
       pitchType,
       velocity: velocity ? parseInt(velocity) : '',
       zone: selectedZone,
-      result: selectedResult
+      result: selectedResult,
+      outcome: outcome
     };
 
     const updatedPitches = [...pitches, newPitch];
     setPitches(updatedPitches);
     localStorage.setItem('currentPitches', JSON.stringify(updatedPitches));
 
-    // Reset zone after logging
+    if (selectedResult === 'Ball') {
+      setCurrentBalls(prev => prev + 1);
+    } else {
+      setCurrentStrikes(prev => prev + 1);
+    }
+
     setSelectedZone(null);
     setSelectedResult('');
     setVelocity('');
+    setOutcome('');
   };
 
   const handleUndoLastPitch = () => {
@@ -155,11 +166,6 @@ function ChartingPage() {
       setPitches(updatedPitches);
       localStorage.setItem('currentPitches', JSON.stringify(updatedPitches));
     }
-  };
-
-  const getPitcherName = (id) => {
-    const p = pitchers.find(p => p.id.toString() === id);
-    return p ? `#${p.number} - ${p.name}` : '';
   };
 
   return (
@@ -295,7 +301,7 @@ function ChartingPage() {
         </div>
       )}
 
-      {/* Current Batter Info */}
+      {/* Current Batter Info + Next Batter Button */}
       {batterNumber && (
         <div style={{
           backgroundColor: '#f9f9f9',
@@ -303,17 +309,37 @@ function ChartingPage() {
           borderRadius: '6px',
           padding: '8px 12px',
           marginBottom: '12px',
-          fontSize: '14px'
+          fontSize: '14px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
         }}>
-          🧢 Batter: <strong>#{batterNumber}</strong>
-          {batterName && ` - ${batterName}`}
-          {' '}<span style={{
-            backgroundColor: batterHand === 'RHH' ? '#1a3a5c' : '#8B0000',
-            color: 'white',
-            padding: '2px 6px',
-            borderRadius: '4px',
-            fontSize: '12px'
-          }}>{batterHand}</span>
+          <span>
+            🧢 <strong>#{batterNumber}</strong>
+            {batterName && ` - ${batterName}`}
+            {' '}
+            <span style={{
+              backgroundColor: batterHand === 'RHH' ? '#1a3a5c' : '#8B0000',
+              color: 'white',
+              padding: '2px 6px',
+              borderRadius: '4px',
+              fontSize: '12px'
+            }}>{batterHand}</span>
+          </span>
+          <button
+            onClick={handleNextBatter}
+            style={{
+              backgroundColor: '#4CBB17',
+              color: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              padding: '6px 12px',
+              fontSize: '13px',
+              cursor: 'pointer'
+            }}
+          >
+            Next Batter ▶
+          </button>
         </div>
       )}
 
@@ -323,6 +349,47 @@ function ChartingPage() {
         onZoneSelect={handleZoneSelect}
         pitches={pitches}
       />
+
+      {/* Ball Strike Count */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        gap: '24px',
+        padding: '10px',
+        backgroundColor: '#1a1a1a',
+        borderRadius: '8px',
+        marginTop: '10px',
+        marginBottom: '10px'
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <p style={{ color: '#aaa', fontSize: '11px', marginBottom: '2px' }}>BALLS</p>
+          <div style={{ display: 'flex', gap: '6px' }}>
+            {[0, 1, 2, 3].map(i => (
+              <div key={i} style={{
+                width: '22px',
+                height: '22px',
+                borderRadius: '50%',
+                backgroundColor: i < currentBalls ? '#4CBB17' : '#444',
+                border: '2px solid #666'
+              }} />
+            ))}
+          </div>
+        </div>
+        <div style={{ textAlign: 'center' }}>
+          <p style={{ color: '#aaa', fontSize: '11px', marginBottom: '2px' }}>STRIKES</p>
+          <div style={{ display: 'flex', gap: '6px' }}>
+            {[0, 1, 2].map(i => (
+              <div key={i} style={{
+                width: '22px',
+                height: '22px',
+                borderRadius: '50%',
+                backgroundColor: i < currentStrikes ? '#cc0000' : '#444',
+                border: '2px solid #666'
+              }} />
+            ))}
+          </div>
+        </div>
+      </div>
 
       {/* Pitch Type & Velocity */}
       <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
@@ -344,6 +411,21 @@ function ChartingPage() {
             onChange={e => setVelocity(e.target.value)}
           />
         </div>
+      </div>
+
+      {/* Outcome */}
+      <div style={{ marginTop: '8px' }}>
+        <label>Outcome</label>
+        <select value={outcome} onChange={e => setOutcome(e.target.value)}>
+          <option value="">-- Select Outcome (optional) --</option>
+          <option value="Hit">Hit</option>
+          <option value="FC">FC - Fielder's Choice</option>
+          <option value="Strikeout">Strikeout</option>
+          <option value="Walk">Walk</option>
+          <option value="HBP">HBP - Hit By Pitch</option>
+          <option value="Foul">Foul</option>
+          <option value="Foul Out">Foul Out</option>
+        </select>
       </div>
 
       {/* Log Pitch Button */}
@@ -386,6 +468,7 @@ function ChartingPage() {
                   <th style={{ padding: '6px' }}>Vel</th>
                   <th style={{ padding: '6px' }}>Zone</th>
                   <th style={{ padding: '6px' }}>Result</th>
+                  <th style={{ padding: '6px' }}>Outcome</th>
                 </tr>
               </thead>
               <tbody>
@@ -404,6 +487,7 @@ function ChartingPage() {
                     <td style={{ padding: '6px', color: pitch.result === 'Strike' ? '#cc0000' : '#0055cc', fontWeight: 'bold' }}>
                       {pitch.result}
                     </td>
+                    <td style={{ padding: '6px' }}>{pitch.outcome || '-'}</td>
                   </tr>
                 ))}
               </tbody>

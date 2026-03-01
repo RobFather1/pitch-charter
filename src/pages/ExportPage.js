@@ -24,7 +24,6 @@ function ExportPage() {
       return;
     }
 
-    // Define CSV columns
     const headers = [
       'pitchNumber',
       'gameDate',
@@ -39,10 +38,10 @@ function ExportPage() {
       'pitchType',
       'velocity',
       'zone',
-      'result'
+      'result',
+      'outcome'
     ];
 
-    // Build CSV rows
     const rows = pitches.map(pitch => [
       pitch.pitchNumber,
       pitch.gameDate,
@@ -57,21 +56,19 @@ function ExportPage() {
       pitch.pitchType,
       pitch.velocity || '',
       pitch.zone,
-      pitch.result
+      pitch.result,
+      pitch.outcome || ''
     ]);
 
-    // Combine headers and rows
     const csvContent = [
       headers.join(','),
       ...rows.map(row => row.join(','))
     ].join('\n');
 
-    // Create download link
     const blob = new Blob([csvContent], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
 
-    // Name the file by game date and number
     const fileName = gameInfo
       ? `pitches-${gameInfo.gameDate}-G${gameInfo.gameNumber}.csv`
       : 'pitches-export.csv';
@@ -96,11 +93,9 @@ function ExportPage() {
     }
   };
 
-  // Count strikes and balls
   const strikes = pitches.filter(p => p.result === 'Strike').length;
   const balls = pitches.filter(p => p.result === 'Ball').length;
 
-  // Group by pitcher
   const pitcherSummary = pitches.reduce((acc, pitch) => {
     const key = pitch.pitcherName || 'Unknown';
     if (!acc[key]) acc[key] = { total: 0, strikes: 0, balls: 0 };
@@ -110,7 +105,6 @@ function ExportPage() {
     return acc;
   }, {});
 
-  // Group by inning
   const inningCounts = pitches.reduce((acc, pitch) => {
     const key = `Inning ${pitch.inning}`;
     acc[key] = (acc[key] || 0) + 1;
