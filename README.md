@@ -1,70 +1,99 @@
-# Getting Started with Create React App
+# Pitch Charter
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A baseball pitch tracking and charting web application built with React. Designed for coaches and scorekeepers to log pitches in real time, monitor ball/strike counts, and export game data for analysis.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- **Game Setup** — Start a session by entering the game date and game number (1, 2, or 3)
+- **Interactive Strike Zone** — Click a 5×5 zone grid to log pitch location; zones automatically classify as strike or ball
+- **Pitch Logging** — Record pitcher, batter, pitch type (FB/CV/SL/CH), velocity, zone, and outcome per pitch
+- **Live Count Tracking** — Visual ball and strike counters update with each logged pitch
+- **Batter Management** — Select existing batters or add new ones on the fly during a game
+- **Roster Management** — Add, edit, and delete pitchers with jersey numbers; data persists across sessions
+- **Undo** — Remove the last logged pitch if needed
+- **Export to CSV** — Download all pitch data as a CSV file formatted for Excel analysis
+- **Game Summary** — View pitch, strike, and ball totals broken down by pitcher and inning
+- **AWS Backend** — Pitches are synced to an AWS Lambda/API Gateway endpoint for cloud persistence
 
-### `npm start`
+## Tech Stack
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- [React 19](https://react.dev/) with [React Router 7](https://reactrouter.com/)
+- Create React App (build tooling)
+- AWS API Gateway + Lambda (backend)
+- `localStorage` for offline-first state persistence
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Project Structure
 
-### `npm test`
+```
+src/
+├── pages/
+│   ├── GameSetupPage.js   # Game date/number entry and session start
+│   ├── ChartingPage.js    # Main pitch logging interface
+│   ├── RosterPage.js      # Pitcher roster CRUD
+│   └── ExportPage.js      # CSV export and game summary stats
+├── components/
+│   └── StrikeZone.js      # Interactive 5×5 zone grid component
+├── App.js                 # Router and nav layout
+└── index.js               # App entry point
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Getting Started
 
-### `npm run build`
+### Prerequisites
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- Node.js 16+ and npm
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Installation
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```bash
+git clone https://github.com/your-username/pitch-charter.git
+cd pitch-charter
+npm install
+```
 
-### `npm run eject`
+### Running Locally
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```bash
+npm start
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Opens at [http://localhost:3000](http://localhost:3000).
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Building for Production
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```bash
+npm run build
+```
 
-## Learn More
+Output is placed in the `build/` folder.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Usage
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+1. **Roster** — Navigate to the Roster page and add your pitchers with jersey numbers before the game.
+2. **Game Setup** — On the home page, enter the game date and game number, then click **Start Charting**.
+3. **Charting** — Select the inning, pitcher, and batter. Click a zone on the strike zone grid, choose the pitch type, enter velocity, select the outcome, and click **Log Pitch**.
+4. **Export** — Navigate to the Export page to view game summary stats and download a CSV of all pitches.
 
-### Code Splitting
+## CSV Export Columns
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+| Column | Description |
+|---|---|
+| `pitchNumber` | Sequential pitch number for the game |
+| `gameDate` | Date of the game |
+| `gameNumber` | Game number (1, 2, or 3) |
+| `gameId` | Combined ID: `{gameDate}-G{gameNumber}` |
+| `inning` | Inning number |
+| `pitcherNumber` | Pitcher jersey number |
+| `pitcherName` | Pitcher name |
+| `batterNumber` | Batter jersey number |
+| `batterName` | Batter name |
+| `batterHand` | Batter handedness |
+| `pitchType` | FB, CV, SL, or CH |
+| `velocity` | Pitch speed (MPH) |
+| `zone` | Zone number (1–25) |
+| `result` | Strike or Ball |
+| `outcome` | Hit, Strikeout, Walk, HBP, Foul, etc. |
 
-### Analyzing the Bundle Size
+## License
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+MIT

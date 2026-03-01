@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import StrikeZone from '../components/StrikeZone';
 
+const API_URL = "https://hhr6e3yl4b.execute-api.us-east-2.amazonaws.com/prod";
+
 function ChartingPage() {
   const navigate = useNavigate();
 
@@ -26,6 +28,28 @@ function ChartingPage() {
   const [newBatterHand, setNewBatterHand] = useState('RHH');
   const [batters, setBatters] = useState([]);
 
+  const savePitch = async (pitch) => {
+    try {
+      await fetch(`${API_URL}/pitches`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(pitch)
+      });
+    } catch (error) {
+      console.error("Error saving pitch:", error);
+    }
+  };
+
+  const loadPitches = async (gameId) => {
+    try {
+      const response = await fetch(`${API_URL}/pitches?gameId=${gameId}`);
+      const data = await response.json();
+      setPitches(data);
+    } catch (error) {
+      console.error("Error loading pitches:", error);
+    }
+  };
+
   useEffect(() => {
     const savedGame = localStorage.getItem('currentGame');
     if (!savedGame) {
@@ -33,7 +57,9 @@ function ChartingPage() {
       navigate('/');
       return;
     }
-    setGameInfo(JSON.parse(savedGame));
+    const parsedGame = JSON.parse(savedGame);
+    setGameInfo(parsedGame);
+    loadPitches(`${parsedGame.gameDate}-G${parsedGame.gameNumber}`);
 
     const savedPitchers = localStorage.getItem('pitchers');
     if (savedPitchers) {
@@ -42,11 +68,6 @@ function ChartingPage() {
       if (pitcherList.length > 0) {
         setPitcher(pitcherList[0].id.toString());
       }
-    }
-
-    const savedPitches = localStorage.getItem('currentPitches');
-    if (savedPitches) {
-      setPitches(JSON.parse(savedPitches));
     }
 
     const savedBatters = localStorage.getItem('currentBatters');
@@ -146,6 +167,7 @@ function ChartingPage() {
     const updatedPitches = [...pitches, newPitch];
     setPitches(updatedPitches);
     localStorage.setItem('currentPitches', JSON.stringify(updatedPitches));
+    savePitch(newPitch);
 
     if (selectedResult === 'Ball') {
       setCurrentBalls(prev => prev + 1);
