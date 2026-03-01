@@ -40,15 +40,21 @@ function ChartingPage() {
     }
   };
 
-  const loadPitches = async (gameId) => {
-    try {
-      const response = await fetch(`${API_URL}/pitches?gameId=${gameId}`);
-      const data = await response.json();
+const loadPitches = async (gameId) => {
+  try {
+    const response = await fetch(`${API_URL}/pitches?gameId=${gameId}`);
+    const data = await response.json();
+    // Make sure data is an array before setting it
+    if (Array.isArray(data)) {
       setPitches(data);
-    } catch (error) {
-      console.error("Error loading pitches:", error);
+    } else {
+      setPitches([]);
     }
-  };
+  } catch (error) {
+    console.error("Error loading pitches:", error);
+    setPitches([]);
+  }
+};
 
   useEffect(() => {
     const savedGame = localStorage.getItem('currentGame');
