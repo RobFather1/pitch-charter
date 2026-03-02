@@ -117,13 +117,12 @@ function RosterPage() {
 
       <label>Jersey Number</label>
       <input
-        type="number"
+        type="text"
+        inputMode="numeric"
         placeholder="e.g. 21"
-        min="0"
-        max="99"
-        step="1"
+        maxLength={2}
         value={number}
-        onChange={e => setNumber(e.target.value)}
+        onChange={e => setNumber(e.target.value.replace(/[^0-9]/g, '').slice(0, 2))}
       />
 
       <label>Pitcher Name</label>

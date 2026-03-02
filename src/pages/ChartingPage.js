@@ -502,13 +502,13 @@ function ChartingPage() {
         <label>Outcome</label>
         <select value={outcome} onChange={e => setOutcome(e.target.value)}>
           <option value="">-- Select Outcome (optional) --</option>
-          <option value="Hit">Hit</option>
           <option value="FC">FC - Fielder's Choice</option>
-          <option value="Strikeout">Strikeout</option>
-          <option value="Walk">Walk</option>
-          <option value="HBP">HBP - Hit By Pitch</option>
           <option value="Foul">Foul</option>
           <option value="Foul Out">Foul Out</option>
+          <option value="HBP">HBP - Hit By Pitch</option>
+          <option value="Hit">Hit</option>
+          <option value="Strikeout">Strikeout</option>
+          <option value="Walk">Walk</option>
         </select>
       </div>
 
