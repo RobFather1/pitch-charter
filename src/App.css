@@ -71,6 +71,7 @@ body {
   max-width: 480px;
   margin: 0 auto;
   background-color: var(--app-bg);
+  color: var(--text-primary);
   min-height: 100vh;
 }
 

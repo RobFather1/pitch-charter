@@ -7,7 +7,7 @@ const getZoneNumber = (row, col) => {
   return row * GRID_SIZE + col + 1;
 };
 
-const getZoneColor = (row, col, selectedZone, pitches, darkMode) => {
+const getZoneColor = (row, col, selectedZone, pitches) => {
   const zoneNum = getZoneNumber(row, col);
   const isStrike = row >= 1 && row <= 3 && col >= 1 && col <= 3;
 
@@ -18,15 +18,9 @@ const getZoneColor = (row, col, selectedZone, pitches, darkMode) => {
   const zonePitches = pitches.filter(p => p.zone === zoneNum);
   if (zonePitches.length > 0) {
     const lastPitch = zonePitches[zonePitches.length - 1];
-    if (darkMode) {
-      return lastPitch.result === 'Strike' ? '#5a1a1a' : '#1a3a5a';
-    }
     return lastPitch.result === 'Strike' ? '#ffcccc' : '#cce5ff';
   }
 
-  if (darkMode) {
-    return isStrike ? '#2a2a2a' : '#1a1a1a';
-  }
   return isStrike ? '#ffffff' : '#e8e8e8';
 };
 
@@ -42,15 +36,16 @@ function StrikeZone({ selectedZone, onZoneSelect, pitches = [] }) {
         gap: '16px',
         marginBottom: '8px',
         fontSize: '12px',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        color: darkMode ? 'white' : 'inherit'
       }}>
         <span>
           <span style={{
             display: 'inline-block',
             width: '12px',
             height: '12px',
-            backgroundColor: darkMode ? '#2a2a2a' : '#ffffff',
-            border: '1px solid var(--zone-grid-bg, #999)',
+            backgroundColor: '#ffffff',
+            border: '1px solid #999',
             marginRight: '4px'
           }}></span>
           Strike Zone
@@ -60,8 +55,8 @@ function StrikeZone({ selectedZone, onZoneSelect, pitches = [] }) {
             display: 'inline-block',
             width: '12px',
             height: '12px',
-            backgroundColor: darkMode ? '#1a1a1a' : '#e8e8e8',
-            border: '1px solid var(--zone-grid-bg, #999)',
+            backgroundColor: '#e8e8e8',
+            border: '1px solid #999',
             marginRight: '4px'
           }}></span>
           Ball Zone
@@ -72,7 +67,7 @@ function StrikeZone({ selectedZone, onZoneSelect, pitches = [] }) {
             width: '12px',
             height: '12px',
             backgroundColor: '#ff6600',
-            border: '1px solid var(--zone-grid-bg, #999)',
+            border: '1px solid #999',
             marginRight: '4px'
           }}></span>
           Selected
@@ -84,8 +79,8 @@ function StrikeZone({ selectedZone, onZoneSelect, pitches = [] }) {
         display: 'grid',
         gridTemplateColumns: 'repeat(5, 1fr)',
         gap: '3px',
-        backgroundColor: darkMode ? '#555' : '#999',
-        border: `2px solid ${darkMode ? '#222' : '#333'}`,
+        backgroundColor: '#999',
+        border: '2px solid #333',
         borderRadius: '4px',
         padding: '3px',
         maxWidth: '300px',
@@ -95,7 +90,7 @@ function StrikeZone({ selectedZone, onZoneSelect, pitches = [] }) {
           Array.from({ length: GRID_SIZE }, (_, col) => {
             const zoneNum = getZoneNumber(row, col);
             const isStrike = row >= 1 && row <= 3 && col >= 1 && col <= 3;
-            const bgColor = getZoneColor(row, col, selectedZone, pitches, darkMode);
+            const bgColor = getZoneColor(row, col, selectedZone, pitches);
             const isSelected = selectedZone === zoneNum;
 
             return (
@@ -111,9 +106,9 @@ function StrikeZone({ selectedZone, onZoneSelect, pitches = [] }) {
                   justifyContent: 'center',
                   cursor: 'pointer',
                   borderRadius: '2px',
-                  border: isSelected ? '2px solid #cc4400' : `1px solid ${darkMode ? '#444' : '#ccc'}`,
+                  border: isSelected ? '2px solid #cc4400' : '1px solid #ccc',
                   fontSize: '11px',
-                  color: darkMode ? '#ccc' : '#555',
+                  color: '#555',
                   userSelect: 'none',
                   transition: 'background-color 0.1s'
                 }}
@@ -121,7 +116,7 @@ function StrikeZone({ selectedZone, onZoneSelect, pitches = [] }) {
                 <span style={{ fontWeight: 'bold', fontSize: '13px' }}>
                   {isStrike ? 'S' : 'B'}
                 </span>
-                <span style={{ fontSize: '10px', color: darkMode ? '#aaa' : '#888' }}>
+                <span style={{ fontSize: '10px', color: '#888' }}>
                   {zoneNum}
                 </span>
               </div>
@@ -135,8 +130,8 @@ function StrikeZone({ selectedZone, onZoneSelect, pitches = [] }) {
         <svg width="80" height="40" viewBox="0 0 80 40">
           <polygon
             points="10,0 70,0 70,20 40,38 10,20"
-            fill={darkMode ? '#444' : 'white'}
-            stroke={darkMode ? '#888' : '#333'}
+            fill="white"
+            stroke="#333"
             strokeWidth="2"
           />
         </svg>
