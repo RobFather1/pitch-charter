@@ -25,6 +25,12 @@ function AppContent() {
         <Route path="/roster" element={<RosterPage />} />
         <Route path="/charting" element={<ChartingPage />} />
         <Route path="/export" element={<ExportPage />} />
+        <Route path="*" element={
+          <div className="page" style={{ textAlign: 'center', paddingTop: '40px' }}>
+            <p style={{ fontSize: '18px', marginBottom: '12px' }}>Page not found.</p>
+            <a href="/">Return to home</a>
+          </div>
+        } />
       </Routes>
     </div>
   );

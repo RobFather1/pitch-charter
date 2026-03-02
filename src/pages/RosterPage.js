@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { safeParseJSON } from '../utils/storage';
+import { safeParseJSON, safeSetItem } from '../utils/storage';
 
 function RosterPage() {
   const [pitchers, setPitchers] = useState(() => {
@@ -13,26 +13,34 @@ function RosterPage() {
 
   const savePitchers = (updatedList) => {
     setPitchers(updatedList);
-    localStorage.setItem('pitchers', JSON.stringify(updatedList));
+    safeSetItem('pitchers', JSON.stringify(updatedList));
   };
 
   const handleAdd = () => {
+    const trimmedName = name.trim();
     const jerseyNum = parseInt(number, 10);
-    if (!name || !number || isNaN(jerseyNum) || jerseyNum < 0 || jerseyNum > 99) {
+    if (!trimmedName || !number || isNaN(jerseyNum) || jerseyNum < 0 || jerseyNum > 99) {
       alert('Please enter a name and a valid jersey number (0–99).');
+      return;
+    }
+    const isDuplicate = pitchers.some(
+      p => p.number === String(jerseyNum) && p.id !== editingId
+    );
+    if (isDuplicate) {
+      alert(`Jersey #${jerseyNum} is already in the roster.`);
       return;
     }
 
     if (editingId !== null) {
       const updated = pitchers.map(p =>
-        p.id === editingId ? { ...p, name, number } : p
+        p.id === editingId ? { ...p, name: trimmedName, number } : p
       );
       savePitchers(updated);
       setEditingId(null);
     } else {
       const newPitcher = {
         id: Date.now(),
-        name,
+        name: trimmedName,
         number
       };
       savePitchers([...pitchers, newPitcher]);
@@ -113,6 +121,7 @@ function RosterPage() {
         placeholder="e.g. 21"
         min="0"
         max="99"
+        step="1"
         value={number}
         onChange={e => setNumber(e.target.value)}
       />

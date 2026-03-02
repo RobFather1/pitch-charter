@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import StrikeZone from '../components/StrikeZone';
-import { safeParseJSON } from '../utils/storage';
+import { safeParseJSON, safeSetItem } from '../utils/storage';
 
 const API_URL = process.env.REACT_APP_API_URL || "https://hhr6e3yl4b.execute-api.us-east-2.amazonaws.com/prod";
+const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
 function ChartingPage() {
   const navigate = useNavigate();
@@ -58,8 +59,7 @@ function ChartingPage() {
       navigate('/');
       return;
     }
-    const datePattern = /^\d{4}-\d{2}-\d{2}$/;
-    if (!parsedGame.gameDate || !datePattern.test(parsedGame.gameDate)) {
+    if (!parsedGame.gameDate || !DATE_PATTERN.test(parsedGame.gameDate)) {
       alert('Game data is invalid. Please set up a new game.');
       navigate('/');
       return;
@@ -131,15 +131,20 @@ function ChartingPage() {
       alert('Please enter a valid jersey number (0–99).');
       return;
     }
+    const isDuplicate = batters.some(b => b.number === String(jerseyNum));
+    if (isDuplicate) {
+      alert(`Batter #${jerseyNum} is already in the lineup.`);
+      return;
+    }
     const newBatter = {
       id: Date.now(),
       number: newBatterNumber,
-      name: newBatterName,
+      name: newBatterName.trim(),
       hand: newBatterHand
     };
     const updatedBatters = [...batters, newBatter];
     setBatters(updatedBatters);
-    localStorage.setItem('currentBatters', JSON.stringify(updatedBatters));
+    safeSetItem('currentBatters', JSON.stringify(updatedBatters));
     setBatterNumber(newBatter.number);
     setBatterName(newBatter.name);
     setBatterHand(newBatter.hand);
@@ -201,7 +206,7 @@ function ChartingPage() {
     setSaving(true);
     const updatedPitches = [...pitches, newPitch];
     setPitches(updatedPitches);
-    localStorage.setItem('currentPitches', JSON.stringify(updatedPitches));
+    safeSetItem('currentPitches', JSON.stringify(updatedPitches));
     savePitch(newPitch);
     setSaving(false);
 
@@ -222,7 +227,7 @@ function ChartingPage() {
     if (window.confirm('Remove the last pitch?')) {
       const updatedPitches = pitches.slice(0, -1);
       setPitches(updatedPitches);
-      localStorage.setItem('currentPitches', JSON.stringify(updatedPitches));
+      safeSetItem('currentPitches', JSON.stringify(updatedPitches));
     }
   };
 
@@ -320,6 +325,7 @@ function ChartingPage() {
             placeholder="e.g. 14"
             min="0"
             max="99"
+            step="1"
             value={newBatterNumber}
             onChange={e => setNewBatterNumber(e.target.value)}
           />
@@ -484,6 +490,7 @@ function ChartingPage() {
             placeholder="e.g. 84"
             min="50"
             max="99"
+            step="1"
             value={velocity}
             onChange={e => setVelocity(e.target.value)}
           />

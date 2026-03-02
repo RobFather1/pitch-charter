@@ -74,16 +74,18 @@ function ExportPage() {
 
     const blob = new Blob([csvContent], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-
     const fileName = gameInfo
       ? `pitches-${gameInfo.gameDate}-G${gameInfo.gameNumber}.csv`
       : 'pitches-export.csv';
 
-    link.href = url;
-    link.download = fileName;
-    link.click();
-    URL.revokeObjectURL(url);
+    try {
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileName;
+      link.click();
+    } finally {
+      URL.revokeObjectURL(url);
+    }
   };
 
   const handleClearGame = () => {

@@ -7,3 +7,11 @@ export function safeParseJSON(raw, fallback) {
     return fallback;
   }
 }
+
+export function safeSetItem(key, value) {
+  try {
+    localStorage.setItem(key, value);
+  } catch (e) {
+    console.warn(`localStorage.setItem('${key}') failed:`, e);
+  }
+}
