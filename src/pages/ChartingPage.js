@@ -197,7 +197,7 @@ function ChartingPage() {
       batterName,
       batterHand,
       pitchType,
-      velocity: velocity ? Math.min(99, Math.max(50, parseInt(velocity))) : '',
+      velocity: velocity ? Math.min(99, Math.max(50, parseFloat(parseFloat(velocity).toFixed(1)))) : '',
       zone: selectedZone,
       result: selectedResult,
       outcome: outcome
@@ -487,10 +487,10 @@ function ChartingPage() {
           <label>Velocity (mph)</label>
           <input
             type="number"
-            placeholder="e.g. 84"
+            placeholder="e.g. 84.5"
             min="50"
             max="99"
-            step="1"
+            step="0.1"
             value={velocity}
             onChange={e => setVelocity(e.target.value)}
           />
