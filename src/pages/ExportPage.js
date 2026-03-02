@@ -133,8 +133,8 @@ function ExportPage() {
         </div>
       ) : (
         <div style={{
-          backgroundColor: '#fff3cd',
-          border: '1px solid #ffc107',
+          backgroundColor: 'var(--surface-alt)',
+          border: '1px solid var(--surface-alt-border)',
           borderRadius: '8px',
           padding: '12px',
           marginBottom: '16px'
@@ -154,20 +154,20 @@ function ExportPage() {
             marginBottom: '16px'
           }}>
             <div style={{
-              backgroundColor: '#f0f7ff',
-              border: '1px solid #b3d9f7',
+              backgroundColor: 'var(--stat-blue-bg)',
+              border: '1px solid var(--stat-blue-border)',
               borderRadius: '8px',
               padding: '12px',
               textAlign: 'center'
             }}>
-              <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#1a3a5c' }}>
+              <p style={{ fontSize: '24px', fontWeight: 'bold', color: 'var(--text-heading)' }}>
                 {pitches.length}
               </p>
-              <p style={{ fontSize: '12px', color: '#555' }}>Total Pitches</p>
+              <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Total Pitches</p>
             </div>
             <div style={{
-              backgroundColor: '#fff0f0',
-              border: '1px solid #ffb3b3',
+              backgroundColor: 'var(--stat-red-bg)',
+              border: '1px solid var(--stat-red-border)',
               borderRadius: '8px',
               padding: '12px',
               textAlign: 'center'
@@ -175,11 +175,11 @@ function ExportPage() {
               <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#cc0000' }}>
                 {strikes}
               </p>
-              <p style={{ fontSize: '12px', color: '#555' }}>Strikes</p>
+              <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Strikes</p>
             </div>
             <div style={{
-              backgroundColor: '#f0fff0',
-              border: '1px solid #b3f7b3',
+              backgroundColor: 'var(--stat-green-bg)',
+              border: '1px solid var(--stat-green-border)',
               borderRadius: '8px',
               padding: '12px',
               textAlign: 'center'
@@ -187,7 +187,7 @@ function ExportPage() {
               <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#006600' }}>
                 {balls}
               </p>
-              <p style={{ fontSize: '12px', color: '#555' }}>Balls</p>
+              <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Balls</p>
             </div>
           </div>
 
@@ -199,11 +199,11 @@ function ExportPage() {
                 display: 'flex',
                 justifyContent: 'space-between',
                 padding: '10px 12px',
-                borderBottom: '1px solid #eee',
+                borderBottom: '1px solid var(--border-light)',
                 fontSize: '14px'
               }}>
                 <span style={{ fontWeight: 'bold' }}>{name}</span>
-                <span style={{ color: '#555' }}>
+                <span style={{ color: 'var(--text-secondary)' }}>
                   {stats.total} pitches —{' '}
                   <span style={{ color: '#cc0000' }}>{stats.strikes} K</span>
                   {' / '}
@@ -227,7 +227,7 @@ function ExportPage() {
                 fontSize: '14px'
               }}>
                 <span style={{ fontWeight: 'bold' }}>{inning}</span>
-                <span style={{ color: '#555' }}>{count} pitches</span>
+                <span style={{ color: 'var(--text-secondary)' }}>{count} pitches</span>
               </div>
             ))}
           </div>
@@ -260,7 +260,7 @@ function ExportPage() {
       >
         🗑️ Clear Game Data
       </button>
-      <p style={{ fontSize: '12px', color: '#888', marginTop: '6px', textAlign: 'center' }}>
+      <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '6px', textAlign: 'center' }}>
         Only clear after you have exported your CSV
       </p>
     </div>

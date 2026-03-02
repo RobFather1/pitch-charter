@@ -64,7 +64,7 @@ function RosterPage() {
 
       {/* Pitcher List */}
       {pitchers.length === 0 ? (
-        <p style={{ color: '#888', marginBottom: '20px' }}>
+        <p style={{ color: 'var(--text-secondary)', marginBottom: '20px' }}>
           No pitchers added yet.
         </p>
       ) : (
@@ -77,8 +77,8 @@ function RosterPage() {
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 padding: '12px',
-                borderBottom: '1px solid #eee',
-                backgroundColor: editingId === pitcher.id ? '#fff8e1' : 'white'
+                borderBottom: '1px solid var(--border-light)',
+                backgroundColor: editingId === pitcher.id ? 'var(--roster-editing-bg)' : 'var(--app-bg)'
               }}>
                 <span style={{ fontSize: '16px' }}>
                   #{pitcher.number} — {pitcher.name}

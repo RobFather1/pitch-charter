@@ -262,8 +262,8 @@ const loadPitches = async (gameId) => {
       {/* New Batter Form */}
       {showNewBatter && (
         <div style={{
-          backgroundColor: '#f0f7ff',
-          border: '1px solid #b3d9f7',
+          backgroundColor: 'var(--surface-alt)',
+          border: '1px solid var(--surface-alt-border)',
           borderRadius: '8px',
           padding: '12px',
           marginBottom: '12px'
@@ -332,8 +332,8 @@ const loadPitches = async (gameId) => {
       {/* Current Batter Info + Next Batter Button */}
       {batterNumber && (
         <div style={{
-          backgroundColor: '#f9f9f9',
-          border: '1px solid #ddd',
+          backgroundColor: 'var(--surface)',
+          border: '1px solid var(--surface-border)',
           borderRadius: '6px',
           padding: '8px 12px',
           marginBottom: '12px',
@@ -502,7 +502,7 @@ const loadPitches = async (gameId) => {
               <tbody>
                 {[...pitches].reverse().slice(0, 10).map((pitch, index) => (
                   <tr key={pitch.id} style={{
-                    backgroundColor: index % 2 === 0 ? '#f9f9f9' : 'white',
+                    backgroundColor: index % 2 === 0 ? 'var(--table-row-alt)' : 'var(--table-row)',
                     textAlign: 'center'
                   }}>
                     <td style={{ padding: '6px' }}>{pitch.pitchNumber}</td>
@@ -521,7 +521,7 @@ const loadPitches = async (gameId) => {
               </tbody>
             </table>
           </div>
-          <p style={{ fontSize: '12px', color: '#888', marginTop: '4px' }}>
+          <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '4px' }}>
             Showing last 10 pitches. Total: {pitches.length}
           </p>
         </div>

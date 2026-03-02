@@ -29,8 +29,8 @@ function GameSetupPage() {
       <h1>⚾ Game Setup</h1>
 
       <div style={{
-        backgroundColor: '#f9f9f9',
-        border: '1px solid #ddd',
+        backgroundColor: 'var(--surface)',
+        border: '1px solid var(--surface-border)',
         borderRadius: '8px',
         padding: '16px',
         marginBottom: '24px'
@@ -54,13 +54,13 @@ function GameSetupPage() {
       </div>
 
       <div style={{
-        backgroundColor: '#e8f4fd',
-        border: '1px solid #b3d9f7',
+        backgroundColor: 'var(--surface-alt)',
+        border: '1px solid var(--surface-alt-border)',
         borderRadius: '8px',
         padding: '12px',
         marginBottom: '24px'
       }}>
-        <p style={{ fontSize: '14px', color: '#1a3a5c' }}>
+        <p style={{ fontSize: '14px', color: 'var(--text-heading)' }}>
           📋 Game ID will be: <strong>{gameDate}-G{gameNumber}</strong>
         </p>
       </div>
@@ -69,8 +69,8 @@ function GameSetupPage() {
         Start Charting ▶
       </button>
 
-      <div style={{ marginTop: '24px', borderTop: '1px solid #eee', paddingTop: '16px' }}>
-        <p style={{ fontSize: '13px', color: '#888', marginBottom: '8px' }}>
+      <div style={{ marginTop: '24px', borderTop: '1px solid var(--border-light)', paddingTop: '16px' }}>
+        <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '8px' }}>
           Need to update your pitching roster?
         </p>
         <button

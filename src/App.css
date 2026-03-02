@@ -1,3 +1,61 @@
+/* ── Light theme (default) ── */
+:root {
+  --app-bg: #ffffff;
+  --body-bg: #f0f0f0;
+  --surface: #f9f9f9;
+  --surface-border: #dddddd;
+  --surface-alt: #f0f7ff;
+  --surface-alt-border: #b3d9f7;
+  --text-primary: #333333;
+  --text-secondary: #888888;
+  --text-heading: #1a3a5c;
+  --border-color: #cccccc;
+  --border-light: #eeeeee;
+  --input-bg: #ffffff;
+  --input-color: #333333;
+  --btn-secondary-bg: #e0e0e0;
+  --btn-secondary-color: #333333;
+  --stat-blue-bg: #f0f7ff;
+  --stat-blue-border: #b3d9f7;
+  --stat-red-bg: #fff0f0;
+  --stat-red-border: #ffb3b3;
+  --stat-green-bg: #f0fff0;
+  --stat-green-border: #b3f7b3;
+  --selected-zone-bg: #fff3e0;
+  --roster-editing-bg: #fff8e1;
+  --table-row-alt: #f9f9f9;
+  --table-row: #ffffff;
+}
+
+/* ── Dark theme ── */
+[data-theme="dark"] {
+  --app-bg: #1e1e1e;
+  --body-bg: #121212;
+  --surface: #2c2c2c;
+  --surface-border: #444444;
+  --surface-alt: #1e2d3d;
+  --surface-alt-border: #2a4a6a;
+  --text-primary: #e0e0e0;
+  --text-secondary: #aaaaaa;
+  --text-heading: #7ab3d4;
+  --border-color: #555555;
+  --border-light: #444444;
+  --input-bg: #2c2c2c;
+  --input-color: #e0e0e0;
+  --btn-secondary-bg: #3a3a3a;
+  --btn-secondary-color: #e0e0e0;
+  --stat-blue-bg: #1a2a3a;
+  --stat-blue-border: #2a4a6a;
+  --stat-red-bg: #2a1a1a;
+  --stat-red-border: #6a2a2a;
+  --stat-green-bg: #1a2a1a;
+  --stat-green-border: #2a5a2a;
+  --selected-zone-bg: #3a2a1a;
+  --roster-editing-bg: #2a2a1a;
+  --table-row-alt: #2c2c2c;
+  --table-row: #1e1e1e;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -6,13 +64,13 @@
 
 body {
   font-family: Arial, sans-serif;
-  background-color: #f0f0f0;
+  background-color: var(--body-bg);
 }
 
 .App {
   max-width: 480px;
   margin: 0 auto;
-  background-color: white;
+  background-color: var(--app-bg);
   min-height: 100vh;
 }
 
@@ -35,6 +93,22 @@ body {
   margin-right: auto;
 }
 
+.dark-mode-toggle {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  line-height: 1;
+  margin-left: auto;
+}
+
+.dark-mode-toggle:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
 .page {
   padding: 16px;
 }
@@ -42,13 +116,13 @@ body {
 h1 {
   font-size: 22px;
   margin-bottom: 16px;
-  color: #1a3a5c;
+  color: var(--text-heading);
 }
 
 h2 {
   font-size: 18px;
   margin-bottom: 12px;
-  color: #1a3a5c;
+  color: var(--text-heading);
 }
 
 button {
@@ -69,8 +143,8 @@ button {
 }
 
 .btn-secondary {
-  background-color: #e0e0e0;
-  color: #333;
+  background-color: var(--btn-secondary-bg);
+  color: var(--btn-secondary-color);
 }
 
 .btn-danger {
@@ -82,15 +156,17 @@ input, select {
   width: 100%;
   padding: 10px;
   font-size: 16px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   margin-bottom: 12px;
+  background-color: var(--input-bg);
+  color: var(--input-color);
 }
 
 label {
   font-size: 14px;
   font-weight: bold;
-  color: #333;
+  color: var(--text-primary);
   display: block;
   margin-bottom: 4px;
 }
