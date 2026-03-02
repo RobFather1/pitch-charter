@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import StrikeZone from '../components/StrikeZone';
+import { safeParseJSON } from '../utils/storage';
 
 const API_URL = "https://hhr6e3yl4b.execute-api.us-east-2.amazonaws.com/prod";
 
@@ -63,13 +64,18 @@ const loadPitches = async (gameId) => {
       navigate('/');
       return;
     }
-    const parsedGame = JSON.parse(savedGame);
+    const parsedGame = safeParseJSON(savedGame, null);
+    if (!parsedGame) {
+      alert('Game data is corrupted. Please set up a new game.');
+      navigate('/');
+      return;
+    }
     setGameInfo(parsedGame);
     loadPitches(`${parsedGame.gameDate}-G${parsedGame.gameNumber}`);
 
     const savedPitchers = localStorage.getItem('pitchers');
     if (savedPitchers) {
-      const pitcherList = JSON.parse(savedPitchers);
+      const pitcherList = safeParseJSON(savedPitchers, []);
       setPitchers(pitcherList);
       if (pitcherList.length > 0) {
         setPitcher(pitcherList[0].id.toString());
@@ -78,7 +84,7 @@ const loadPitches = async (gameId) => {
 
     const savedBatters = localStorage.getItem('currentBatters');
     if (savedBatters) {
-      setBatters(JSON.parse(savedBatters));
+      setBatters(safeParseJSON(savedBatters, []));
     }
   }, [navigate]);
 

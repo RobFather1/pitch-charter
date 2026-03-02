@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
+import { safeParseJSON } from '../utils/storage';
 
 function RosterPage() {
   const [pitchers, setPitchers] = useState(() => {
     const saved = localStorage.getItem('pitchers');
-    return saved ? JSON.parse(saved) : [];
+    return safeParseJSON(saved, []);
   });
 
   const [name, setName] = useState('');

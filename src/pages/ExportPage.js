@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { safeParseJSON } from '../utils/storage';
 
 function ExportPage() {
   const navigate = useNavigate();
@@ -9,12 +10,12 @@ function ExportPage() {
   useEffect(() => {
     const savedPitches = localStorage.getItem('currentPitches');
     if (savedPitches) {
-      setPitches(JSON.parse(savedPitches));
+      setPitches(safeParseJSON(savedPitches, []));
     }
 
     const savedGame = localStorage.getItem('currentGame');
     if (savedGame) {
-      setGameInfo(JSON.parse(savedGame));
+      setGameInfo(safeParseJSON(savedGame, null));
     }
   }, []);
 
