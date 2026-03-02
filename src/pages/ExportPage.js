@@ -18,6 +18,12 @@ function ExportPage() {
     }
   }, []);
 
+  const escapeCsvField = (value) => {
+    const str = value == null ? '' : String(value);
+    const safe = ['=', '+', '-', '@'].includes(str[0]) ? "'" + str : str;
+    return '"' + safe.replace(/"/g, '""') + '"';
+  };
+
   const handleExport = () => {
     if (pitches.length === 0) {
       alert('No pitches to export yet.');
@@ -62,7 +68,7 @@ function ExportPage() {
 
     const csvContent = [
       headers.join(','),
-      ...rows.map(row => row.join(','))
+      ...rows.map(row => row.map(escapeCsvField).join(','))
     ].join('\n');
 
     const blob = new Blob([csvContent], { type: 'text/csv' });
