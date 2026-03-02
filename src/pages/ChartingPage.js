@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import StrikeZone from '../components/StrikeZone';
 import { safeParseJSON } from '../utils/storage';
 
-const API_URL = "https://hhr6e3yl4b.execute-api.us-east-2.amazonaws.com/prod";
+const API_URL = process.env.REACT_APP_API_URL || "https://hhr6e3yl4b.execute-api.us-east-2.amazonaws.com/prod";
 
 function ChartingPage() {
   const navigate = useNavigate();
@@ -28,6 +28,8 @@ function ChartingPage() {
   const [newBatterName, setNewBatterName] = useState('');
   const [newBatterHand, setNewBatterHand] = useState('RHH');
   const [batters, setBatters] = useState([]);
+  const [saving, setSaving] = useState(false);
+  const [loadError, setLoadError] = useState(false);
 
   const savePitch = async (pitch) => {
     try {
@@ -41,23 +43,9 @@ function ChartingPage() {
     }
   };
 
-const loadPitches = async (gameId) => {
-  try {
-    const response = await fetch(`${API_URL}/pitches?gameId=${gameId}`);
-    const data = await response.json();
-    // Make sure data is an array before setting it
-    if (Array.isArray(data)) {
-      setPitches(data);
-    } else {
-      setPitches([]);
-    }
-  } catch (error) {
-    console.error("Error loading pitches:", error);
-    setPitches([]);
-  }
-};
-
   useEffect(() => {
+    const controller = new AbortController();
+
     const savedGame = localStorage.getItem('currentGame');
     if (!savedGame) {
       alert('No game set up. Please set up a game first.');
@@ -70,8 +58,38 @@ const loadPitches = async (gameId) => {
       navigate('/');
       return;
     }
+    const datePattern = /^\d{4}-\d{2}-\d{2}$/;
+    if (!parsedGame.gameDate || !datePattern.test(parsedGame.gameDate)) {
+      alert('Game data is invalid. Please set up a new game.');
+      navigate('/');
+      return;
+    }
     setGameInfo(parsedGame);
-    loadPitches(`${parsedGame.gameDate}-G${parsedGame.gameNumber}`);
+
+    const gameId = `${parsedGame.gameDate}-G${parsedGame.gameNumber}`;
+    const params = new URLSearchParams({ gameId });
+    setLoadError(false);
+    fetch(`${API_URL}/pitches?${params}`, { signal: controller.signal })
+      .then(response => {
+        if (!response.ok) {
+          console.warn(`Failed to load pitches: ${response.status}`);
+          setLoadError(true);
+          setPitches([]);
+          return undefined;
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (data !== undefined) {
+          setPitches(Array.isArray(data) ? data : []);
+        }
+      })
+      .catch(error => {
+        if (error.name === 'AbortError') return;
+        console.error('Error loading pitches:', error);
+        setPitches([]);
+        setLoadError(true);
+      });
 
     const savedPitchers = localStorage.getItem('pitchers');
     if (savedPitchers) {
@@ -86,6 +104,8 @@ const loadPitches = async (gameId) => {
     if (savedBatters) {
       setBatters(safeParseJSON(savedBatters, []));
     }
+
+    return () => controller.abort();
   }, [navigate]);
 
   const handleZoneSelect = (zoneNum, result) => {
@@ -143,6 +163,7 @@ const loadPitches = async (gameId) => {
   };
 
   const handleLogPitch = () => {
+    if (saving) return;
     if (!selectedZone) {
       alert('Please select a zone on the strike zone grid.');
       return;
@@ -177,10 +198,12 @@ const loadPitches = async (gameId) => {
       outcome: outcome
     };
 
+    setSaving(true);
     const updatedPitches = [...pitches, newPitch];
     setPitches(updatedPitches);
     localStorage.setItem('currentPitches', JSON.stringify(updatedPitches));
     savePitch(newPitch);
+    setSaving(false);
 
     if (selectedResult === 'Ball') {
       setCurrentBalls(prev => prev + 1);
@@ -221,6 +244,21 @@ const loadPitches = async (gameId) => {
           <span>📅 {gameInfo.gameDate}</span>
           <span>Game {gameInfo.gameNumber}</span>
           <span>Pitches: {pitches.length}</span>
+        </div>
+      )}
+
+      {/* API Load Error Banner */}
+      {loadError && (
+        <div style={{
+          backgroundColor: 'var(--stat-red-bg)',
+          border: '1px solid var(--stat-red-border)',
+          borderRadius: '6px',
+          padding: '8px 12px',
+          marginBottom: '8px',
+          fontSize: '13px',
+          color: 'var(--text-primary)'
+        }}>
+          Could not load pitches from server. Showing locally saved data.
         </div>
       )}
 
@@ -471,6 +509,7 @@ const loadPitches = async (gameId) => {
       <button
         className="btn-primary"
         onClick={handleLogPitch}
+        disabled={saving}
         style={{ marginTop: '12px' }}
       >
         ⚾ LOG PITCH
