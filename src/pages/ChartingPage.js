@@ -567,7 +567,7 @@ function ChartingPage() {
                     <td style={{ padding: '6px' }}>{pitch.pitcherName}</td>
                     <td style={{ padding: '6px' }}>#{pitch.batterNumber}</td>
                     <td style={{ padding: '6px' }}>{pitch.pitchType}</td>
-                    <td style={{ padding: '6px' }}>{pitch.velocity || '-'}</td>
+                    <td style={{ padding: '6px' }}>{pitch.velocity !== '' && pitch.velocity != null ? parseFloat(pitch.velocity).toFixed(1) : '-'}</td>
                     <td style={{ padding: '6px' }}>{pitch.zone}</td>
                     <td style={{ padding: '6px', color: pitch.result === 'Strike' ? '#cc0000' : '#0055cc', fontWeight: 'bold' }}>
                       {pitch.result}
