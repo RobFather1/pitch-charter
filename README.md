@@ -2,6 +2,8 @@
 
 A baseball pitch tracking and charting web application built with React. Designed for coaches and scorekeepers to log pitches in real time, monitor ball/strike counts, and export game data for analysis.
 
+![Charting Page](public/Charting_Screenshot.jpg)
+
 ## Features
 
 - **Game Setup** — Start a session by entering the game date and game number (1, 2, or 3)
@@ -13,6 +15,7 @@ A baseball pitch tracking and charting web application built with React. Designe
 - **Undo** — Remove the last logged pitch if needed
 - **Export to CSV** — Download all pitch data as a CSV file formatted for Excel analysis
 - **Game Summary** — View pitch, strike, and ball totals broken down by pitcher and inning
+- **Dark Mode** — Toggle between light and dark themes; preference is saved across sessions
 - **AWS Backend** — Pitches are synced to an AWS Lambda/API Gateway endpoint for cloud persistence
 
 ## Tech Stack
@@ -33,6 +36,8 @@ src/
 │   └── ExportPage.js      # CSV export and game summary stats
 ├── components/
 │   └── StrikeZone.js      # Interactive 5×5 zone grid component
+├── context/
+│   └── DarkModeContext.js # Dark mode state and toggle
 ├── App.js                 # Router and nav layout
 └── index.js               # App entry point
 ```
