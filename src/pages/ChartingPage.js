@@ -106,8 +106,9 @@ const loadPitches = async (gameId) => {
   };
 
   const handleAddBatter = () => {
-    if (!newBatterNumber) {
-      alert('Please enter a jersey number.');
+    const jerseyNum = parseInt(newBatterNumber, 10);
+    if (!newBatterNumber || isNaN(jerseyNum) || jerseyNum < 0 || jerseyNum > 99) {
+      alert('Please enter a valid jersey number (0–99).');
       return;
     }
     const newBatter = {
@@ -170,7 +171,7 @@ const loadPitches = async (gameId) => {
       batterName,
       batterHand,
       pitchType,
-      velocity: velocity ? parseInt(velocity) : '',
+      velocity: velocity ? Math.min(99, Math.max(50, parseInt(velocity))) : '',
       zone: selectedZone,
       result: selectedResult,
       outcome: outcome
@@ -279,6 +280,8 @@ const loadPitches = async (gameId) => {
           <input
             type="number"
             placeholder="e.g. 14"
+            min="0"
+            max="99"
             value={newBatterNumber}
             onChange={e => setNewBatterNumber(e.target.value)}
           />
@@ -441,6 +444,8 @@ const loadPitches = async (gameId) => {
           <input
             type="number"
             placeholder="e.g. 84"
+            min="50"
+            max="99"
             value={velocity}
             onChange={e => setVelocity(e.target.value)}
           />

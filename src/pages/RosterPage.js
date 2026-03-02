@@ -17,8 +17,9 @@ function RosterPage() {
   };
 
   const handleAdd = () => {
-    if (!name || !number) {
-      alert('Please enter both a name and number.');
+    const jerseyNum = parseInt(number, 10);
+    if (!name || !number || isNaN(jerseyNum) || jerseyNum < 0 || jerseyNum > 99) {
+      alert('Please enter a name and a valid jersey number (0–99).');
       return;
     }
 
@@ -110,6 +111,8 @@ function RosterPage() {
       <input
         type="number"
         placeholder="e.g. 21"
+        min="0"
+        max="99"
         value={number}
         onChange={e => setNumber(e.target.value)}
       />
