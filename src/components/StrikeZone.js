@@ -93,6 +93,22 @@ function StrikeZone({ selectedZone, onZoneSelect, pitches = [] }) {
             const bgColor = getZoneColor(row, col, selectedZone, pitches);
             const isSelected = selectedZone === zoneNum;
 
+            const GOLD = '2px solid #FFD700';
+            const INNER = '1px solid #ccc';
+            let borderStyle;
+            if (isSelected) {
+              borderStyle = { border: '2px solid #cc4400' };
+            } else if (isStrike) {
+              borderStyle = {
+                borderTop:    row === 1 ? GOLD : INNER,
+                borderBottom: row === 3 ? GOLD : INNER,
+                borderLeft:   col === 1 ? GOLD : INNER,
+                borderRight:  col === 3 ? GOLD : INNER,
+              };
+            } else {
+              borderStyle = { border: INNER };
+            }
+
             return (
               <div
                 key={zoneNum}
@@ -106,7 +122,7 @@ function StrikeZone({ selectedZone, onZoneSelect, pitches = [] }) {
                   justifyContent: 'center',
                   cursor: 'pointer',
                   borderRadius: '2px',
-                  border: isSelected ? '2px solid #cc4400' : '1px solid #ccc',
+                  ...borderStyle,
                   fontSize: '11px',
                   color: '#555',
                   userSelect: 'none',
@@ -116,7 +132,7 @@ function StrikeZone({ selectedZone, onZoneSelect, pitches = [] }) {
                 <span style={{ fontWeight: 'bold', fontSize: '13px' }}>
                   {isStrike ? 'S' : 'B'}
                 </span>
-                <span style={{ fontSize: '10px', color: '#888' }}>
+                <span style={{ fontSize: '10px', color: isStrike ? '#FFD700' : '#888', fontWeight: isStrike ? 'bold' : 'normal' }}>
                   {zoneNum}
                 </span>
               </div>
