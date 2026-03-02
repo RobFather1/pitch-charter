@@ -7,6 +7,26 @@ import ExportPage from './pages/ExportPage';
 import { DarkModeProvider, useDarkMode } from './context/DarkModeContext';
 import './App.css';
 
+class ErrorBoundary extends React.Component {
+  state = { hasError: false };
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="page" style={{ textAlign: 'center', paddingTop: '40px' }}>
+          <p style={{ fontSize: '18px', marginBottom: '12px' }}>Something went wrong.</p>
+          <a href="/">Return to home</a>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 function AppContent() {
   const { darkMode, toggleDarkMode } = useDarkMode();
 
@@ -20,18 +40,20 @@ function AppContent() {
           {darkMode ? '☀' : '☾'}
         </button>
       </nav>
-      <Routes>
-        <Route path="/" element={<GameSetupPage />} />
-        <Route path="/roster" element={<RosterPage />} />
-        <Route path="/charting" element={<ChartingPage />} />
-        <Route path="/export" element={<ExportPage />} />
-        <Route path="*" element={
-          <div className="page" style={{ textAlign: 'center', paddingTop: '40px' }}>
-            <p style={{ fontSize: '18px', marginBottom: '12px' }}>Page not found.</p>
-            <a href="/">Return to home</a>
-          </div>
-        } />
-      </Routes>
+      <ErrorBoundary>
+        <Routes>
+          <Route path="/" element={<GameSetupPage />} />
+          <Route path="/roster" element={<RosterPage />} />
+          <Route path="/charting" element={<ChartingPage />} />
+          <Route path="/export" element={<ExportPage />} />
+          <Route path="*" element={
+            <div className="page" style={{ textAlign: 'center', paddingTop: '40px' }}>
+              <p style={{ fontSize: '18px', marginBottom: '12px' }}>Page not found.</p>
+              <a href="/">Return to home</a>
+            </div>
+          } />
+        </Routes>
+      </ErrorBoundary>
     </div>
   );
 }
