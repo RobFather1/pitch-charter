@@ -47,7 +47,7 @@ function GameSetupPage() {
         <label>Opponent</label>
         <input
           type="text"
-          placeholder="e.g. Riverside High"
+          placeholder="e.g. Hill Valley High"
           value={opponent}
           onChange={e => setOpponent(e.target.value)}
         />
