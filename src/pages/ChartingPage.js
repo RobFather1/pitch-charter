@@ -91,7 +91,7 @@ function ChartingPage() {
         setLoadError(true);
       });
 
-    fetch(`${API_URL}/roster?teamId=main`, { signal: controller.signal })
+    fetch(`${API_URL}/roster?teamID=main`, { signal: controller.signal })
       .then(res => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.json();
@@ -113,10 +113,25 @@ function ChartingPage() {
         }
       });
 
-    const savedBatters = localStorage.getItem('currentBatters');
-    if (savedBatters) {
-      setBatters(safeParseJSON(savedBatters, []));
-    }
+    fetch(`${API_URL}/batters?gameID=${gameId}`, { signal: controller.signal })
+      .then(res => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
+      .then(data => {
+        if (Array.isArray(data)) {
+          setBatters(data);
+          safeSetItem('currentBatters', JSON.stringify(data));
+        }
+      })
+      .catch(err => {
+        if (err.name === 'AbortError') return;
+        console.error('Error loading batters:', err);
+        const savedBatters = localStorage.getItem('currentBatters');
+        if (savedBatters) {
+          setBatters(safeParseJSON(savedBatters, []));
+        }
+      });
 
     return () => controller.abort();
   }, [navigate]);
@@ -158,6 +173,17 @@ function ChartingPage() {
     const updatedBatters = [...batters, newBatter];
     setBatters(updatedBatters);
     safeSetItem('currentBatters', JSON.stringify(updatedBatters));
+    fetch(`${API_URL}/batters`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        gameID: `${gameInfo.gameDate}-G${gameInfo.gameNumber}`,
+        batterID: newBatter.id.toString(),
+        number: newBatter.number,
+        name: newBatter.name,
+        hand: newBatter.hand
+      })
+    }).catch(err => console.error('Failed to save batter to cloud:', err));
     setBatterNumber(newBatter.number);
     setBatterName(newBatter.name);
     setBatterHand(newBatter.hand);

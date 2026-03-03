@@ -19,14 +19,14 @@ export const handler = async (event) => {
   // ── ROSTER ROUTES ──────────────────────────────────────────
   if (path.includes("/roster")) {
 
-    // GET /roster?teamId=main  →  load all pitchers for a team
+    // GET /roster?teamID=main  →  load all pitchers for a team
     if (method === "GET") {
-      const teamId = event.queryStringParameters?.teamId || "main";
+      const teamID = event.queryStringParameters?.teamID || "main";
 
       const response = await docClient.send(new QueryCommand({
         TableName: "Rosters",
-        KeyConditionExpression: "teamId = :teamId",
-        ExpressionAttributeValues: { ":teamId": teamId }
+        KeyConditionExpression: "teamID = :teamID",
+        ExpressionAttributeValues: { ":teamID": teamID }
       }));
 
       return {
@@ -41,8 +41,8 @@ export const handler = async (event) => {
       const body = event.body ? JSON.parse(event.body) : event;
 
       const item = {
-        teamId: String(body.teamId || "main"),
-        pitcherId: String(body.pitcherId),
+        teamID: String(body.teamID || "main"),
+        pitcherID: String(body.pitcherID),
         name: String(body.name || ""),
         number: String(body.number || "")
       };
@@ -66,8 +66,8 @@ export const handler = async (event) => {
       await docClient.send(new DeleteCommand({
         TableName: "Rosters",
         Key: {
-          teamId: String(body.teamId || "main"),
-          pitcherId: String(body.pitcherId)
+          teamID: String(body.teamID || "main"),
+          pitcherID: String(body.pitcherID)
         }
       }));
 
@@ -79,7 +79,79 @@ export const handler = async (event) => {
     }
   }
 
-  // ── PITCH ROUTES (unchanged) ────────────────────────────────
+  // ── BATTER ROUTES ──────────────────────────────────────────
+  if (path.includes("/batters")) {
+
+    // GET /batters?gameID=  →  load all batters for a game
+    if (method === "GET") {
+      const gameID = event.queryStringParameters?.gameID;
+
+      if (!gameID) {
+        return {
+          statusCode: 400,
+          headers,
+          body: JSON.stringify({ error: "Missing gameID" })
+        };
+      }
+
+      const response = await docClient.send(new QueryCommand({
+        TableName: "Batters",
+        KeyConditionExpression: "gameID = :gameID",
+        ExpressionAttributeValues: { ":gameID": gameID }
+      }));
+
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify(response.Items)
+      };
+    }
+
+    // POST /batters  →  save a single batter
+    if (method === "POST") {
+      const body = event.body ? JSON.parse(event.body) : event;
+
+      const item = {
+        gameID: String(body.gameID),
+        batterID: String(body.batterID),
+        number: String(body.number || ""),
+        name: String(body.name || ""),
+        hand: String(body.hand || "")
+      };
+
+      await docClient.send(new PutCommand({
+        TableName: "Batters",
+        Item: item
+      }));
+
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({ message: "Batter saved!" })
+      };
+    }
+
+    // DELETE /batters  →  remove a single batter
+    if (method === "DELETE") {
+      const body = event.body ? JSON.parse(event.body) : event;
+
+      await docClient.send(new DeleteCommand({
+        TableName: "Batters",
+        Key: {
+          gameID: String(body.gameID),
+          batterID: String(body.batterID)
+        }
+      }));
+
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({ message: "Batter deleted!" })
+      };
+    }
+  }
+
+  // ── PITCH ROUTES ────────────────────────────────────────────
   const isGet = method === "GET" || event.queryStringParameters?.gameId;
   const isPost = method === "POST" || event.gameId || (event.body && JSON.parse(event.body).gameId);
 

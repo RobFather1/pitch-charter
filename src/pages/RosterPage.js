@@ -11,7 +11,7 @@ function RosterPage() {
   const [editingId, setEditingId] = useState(null);
 
   useEffect(() => {
-    fetch(`${API_URL}/roster?teamId=main`)
+    fetch(`${API_URL}/roster?teamID=main`)
       .then(res => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.json();
@@ -69,7 +69,7 @@ function RosterPage() {
     fetch(`${API_URL}/roster`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ teamId: 'main', pitcherId: syncId.toString(), name: trimmedName, number })
+      body: JSON.stringify({ teamID: 'main', pitcherID: syncId.toString(), name: trimmedName, number })
     }).catch(err => console.error('Failed to save pitcher to cloud:', err));
 
     setName('');
@@ -88,7 +88,7 @@ function RosterPage() {
       fetch(`${API_URL}/roster`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ teamId: 'main', pitcherId: id.toString() })
+        body: JSON.stringify({ teamID: 'main', pitcherID: id.toString() })
       }).catch(err => console.error('Failed to delete pitcher from cloud:', err));
     }
   };
