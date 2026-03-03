@@ -36,6 +36,7 @@ function ExportPage() {
       'gameDate',
       'gameNumber',
       'gameId',
+      'opponent',
       'inning',
       'pitcherNumber',
       'pitcherName',
@@ -54,6 +55,7 @@ function ExportPage() {
       pitch.gameDate,
       pitch.gameNumber,
       pitch.gameId,
+      pitch.opponent || '',
       pitch.inning,
       pitch.pitcherNumber,
       pitch.pitcherName,
@@ -134,7 +136,7 @@ function ExportPage() {
           marginBottom: '16px'
         }}>
           <p style={{ fontSize: '16px', fontWeight: 'bold' }}>
-            {gameInfo.gameDate} — Game {gameInfo.gameNumber}
+            {gameInfo.gameDate} — Game {gameInfo.gameNumber}{gameInfo.opponent ? ` — vs ${gameInfo.opponent}` : ''}
           </p>
           <p style={{ fontSize: '13px', marginTop: '4px', opacity: 0.8 }}>
             Game ID: {gameInfo.gameDate}-G{gameInfo.gameNumber}

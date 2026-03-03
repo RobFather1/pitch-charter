@@ -189,6 +189,7 @@ function ChartingPage() {
       gameDate: gameInfo.gameDate,
       gameNumber: gameInfo.gameNumber,
       gameId: `${gameInfo.gameDate}-G${gameInfo.gameNumber}`,
+      opponent: gameInfo.opponent || '',
       pitchNumber: pitches.length + 1,
       inning: parseInt(inning),
       pitcherName: selectedPitcher ? selectedPitcher.name : '',
@@ -247,6 +248,7 @@ function ChartingPage() {
           justifyContent: 'space-between'
         }}>
           <span>📅 {gameInfo.gameDate}</span>
+          {gameInfo.opponent && <span>vs {gameInfo.opponent}</span>}
           <span>Game {gameInfo.gameNumber}</span>
           <span>Pitches: {pitches.length}</span>
         </div>

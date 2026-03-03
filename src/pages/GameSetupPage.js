@@ -8,6 +8,7 @@ function GameSetupPage() {
 
   const [gameDate, setGameDate] = useState(today);
   const [gameNumber, setGameNumber] = useState('1');
+  const [opponent, setOpponent] = useState('');
 
   const handleStartGame = () => {
     if (!gameDate || !gameNumber) {
@@ -17,7 +18,8 @@ function GameSetupPage() {
 
     const gameInfo = {
       gameDate,
-      gameNumber
+      gameNumber,
+      opponent: opponent.trim()
     };
 
     localStorage.setItem('currentGame', JSON.stringify(gameInfo));
@@ -40,6 +42,14 @@ function GameSetupPage() {
           type="date"
           value={gameDate}
           onChange={e => setGameDate(e.target.value)}
+        />
+
+        <label>Opponent</label>
+        <input
+          type="text"
+          placeholder="e.g. Riverside High"
+          value={opponent}
+          onChange={e => setOpponent(e.target.value)}
         />
 
         <label>Game Number</label>
