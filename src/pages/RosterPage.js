@@ -1,15 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { safeParseJSON, safeSetItem } from '../utils/storage';
 
+const API_URL = process.env.REACT_APP_API_URL || "https://hhr6e3yl4b.execute-api.us-east-2.amazonaws.com/prod";
+
 function RosterPage() {
-  const [pitchers, setPitchers] = useState(() => {
-    const saved = localStorage.getItem('pitchers');
-    return safeParseJSON(saved, []);
-  });
+  const [pitchers, setPitchers] = useState([]);
 
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
   const [editingId, setEditingId] = useState(null);
+
+  useEffect(() => {
+    fetch(`${API_URL}/roster?teamId=main`)
+      .then(res => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
+      .then(data => {
+        if (Array.isArray(data)) {
+          setPitchers(data);
+          safeSetItem('pitchers', JSON.stringify(data));
+        }
+      })
+      .catch(() => {
+        const saved = localStorage.getItem('pitchers');
+        setPitchers(safeParseJSON(saved, []));
+      });
+  }, []);
 
   const savePitchers = (updatedList) => {
     setPitchers(updatedList);
@@ -31,11 +48,13 @@ function RosterPage() {
       return;
     }
 
+    let syncId;
     if (editingId !== null) {
       const updated = pitchers.map(p =>
         p.id === editingId ? { ...p, name: trimmedName, number } : p
       );
       savePitchers(updated);
+      syncId = editingId;
       setEditingId(null);
     } else {
       const newPitcher = {
@@ -44,7 +63,14 @@ function RosterPage() {
         number
       };
       savePitchers([...pitchers, newPitcher]);
+      syncId = newPitcher.id;
     }
+
+    fetch(`${API_URL}/roster`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ teamId: 'main', pitcherId: syncId.toString(), name: trimmedName, number })
+    }).catch(err => console.error('Failed to save pitcher to cloud:', err));
 
     setName('');
     setNumber('');
@@ -59,6 +85,11 @@ function RosterPage() {
   const handleDelete = (id) => {
     if (window.confirm('Delete this pitcher?')) {
       savePitchers(pitchers.filter(p => p.id !== id));
+      fetch(`${API_URL}/roster`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ teamId: 'main', pitcherId: id.toString() })
+      }).catch(err => console.error('Failed to delete pitcher from cloud:', err));
     }
   };
 

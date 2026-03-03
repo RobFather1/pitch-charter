@@ -91,14 +91,27 @@ function ChartingPage() {
         setLoadError(true);
       });
 
-    const savedPitchers = localStorage.getItem('pitchers');
-    if (savedPitchers) {
-      const pitcherList = safeParseJSON(savedPitchers, []);
-      setPitchers(pitcherList);
-      if (pitcherList.length > 0) {
-        setPitcher(pitcherList[0].id.toString());
-      }
-    }
+    fetch(`${API_URL}/roster?teamId=main`, { signal: controller.signal })
+      .then(res => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
+      .then(data => {
+        if (Array.isArray(data)) {
+          setPitchers(data);
+          if (data.length > 0) setPitcher(data[0].id.toString());
+        }
+      })
+      .catch(err => {
+        if (err.name === 'AbortError') return;
+        console.error('Error loading roster:', err);
+        const savedPitchers = localStorage.getItem('pitchers');
+        if (savedPitchers) {
+          const pitcherList = safeParseJSON(savedPitchers, []);
+          setPitchers(pitcherList);
+          if (pitcherList.length > 0) setPitcher(pitcherList[0].id.toString());
+        }
+      });
 
     const savedBatters = localStorage.getItem('currentBatters');
     if (savedBatters) {
