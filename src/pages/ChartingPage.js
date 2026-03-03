@@ -31,6 +31,7 @@ function ChartingPage() {
   const [batters, setBatters] = useState([]);
   const [saving, setSaving] = useState(false);
   const [loadError, setLoadError] = useState(false);
+  const [cloudPitchCount, setCloudPitchCount] = useState(0);
 
   const savePitch = async (pitch) => {
     try {
@@ -66,10 +67,9 @@ function ChartingPage() {
     }
     setGameInfo(parsedGame);
 
-    const gameId = `${parsedGame.gameDate}-G${parsedGame.gameNumber}`;
-    const params = new URLSearchParams({ gameId });
+    const gameId = parsedGame.gameID || `${parsedGame.gameDate}-G${parsedGame.gameNumber}`;
     setLoadError(false);
-    fetch(`${API_URL}/pitches?${params}`, { signal: controller.signal })
+    fetch(`${API_URL}/pitches?gameID=${gameId}`, { signal: controller.signal })
       .then(response => {
         if (!response.ok) {
           console.warn(`Failed to load pitches: ${response.status}`);
@@ -81,7 +81,9 @@ function ChartingPage() {
       })
       .then(data => {
         if (data !== undefined) {
-          setPitches(Array.isArray(data) ? data : []);
+          const loaded = Array.isArray(data) ? data : [];
+          setPitches(loaded);
+          setCloudPitchCount(loaded.length);
         }
       })
       .catch(error => {
@@ -99,7 +101,7 @@ function ChartingPage() {
       .then(data => {
         if (Array.isArray(data)) {
           setPitchers(data);
-          if (data.length > 0) setPitcher(data[0].id.toString());
+          if (data.length > 0) setPitcher((data[0].pitcherID || data[0].id).toString());
         }
       })
       .catch(err => {
@@ -109,7 +111,7 @@ function ChartingPage() {
         if (savedPitchers) {
           const pitcherList = safeParseJSON(savedPitchers, []);
           setPitchers(pitcherList);
-          if (pitcherList.length > 0) setPitcher(pitcherList[0].id.toString());
+          if (pitcherList.length > 0) setPitcher((pitcherList[0].pitcherID || pitcherList[0].id).toString());
         }
       });
 
@@ -177,7 +179,7 @@ function ChartingPage() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        gameID: `${gameInfo.gameDate}-G${gameInfo.gameNumber}`,
+        gameID: gameInfo.gameID || `${gameInfo.gameDate}-G${gameInfo.gameNumber}`,
         batterID: newBatter.id.toString(),
         number: newBatter.number,
         name: newBatter.name,
@@ -198,7 +200,7 @@ function ChartingPage() {
       setShowNewBatter(true);
       return;
     }
-    const batter = batters.find(b => b.id.toString() === batterId);
+    const batter = batters.find(b => (b.batterID || b.id).toString() === batterId);
     if (batter) {
       setBatterNumber(batter.number);
       setBatterName(batter.name);
@@ -221,13 +223,13 @@ function ChartingPage() {
       return;
     }
 
-    const selectedPitcher = pitchers.find(p => p.id.toString() === pitcher);
+    const selectedPitcher = pitchers.find(p => (p.pitcherID || p.id).toString() === pitcher);
 
     const newPitch = {
       id: Date.now(),
       gameDate: gameInfo.gameDate,
       gameNumber: gameInfo.gameNumber,
-      gameId: `${gameInfo.gameDate}-G${gameInfo.gameNumber}`,
+      gameId: gameInfo.gameID || `${gameInfo.gameDate}-G${gameInfo.gameNumber}`,
       opponent: gameInfo.opponent || '',
       pitchNumber: pitches.length + 1,
       inning: parseInt(inning),
@@ -327,7 +329,7 @@ function ChartingPage() {
             {pitchers
               .sort((a, b) => Number(a.number) - Number(b.number))
               .map(p => (
-                <option key={p.id} value={p.id}>
+                <option key={p.pitcherID || p.id} value={p.pitcherID || p.id}>
                   #{p.number} - {p.name}
                 </option>
               ))}
@@ -339,12 +341,12 @@ function ChartingPage() {
       <div style={{ marginBottom: '8px' }}>
         <label>Batter</label>
         <select
-          value={batterNumber ? batters.find(b => b.number === batterNumber)?.id.toString() || '' : ''}
+          value={batterNumber ? (b => b ? (b.batterID || b.id).toString() : '')(batters.find(b => b.number === batterNumber)) : ''}
           onChange={e => handleBatterSelect(e.target.value)}
         >
           <option value="">-- Select or Add Batter --</option>
           {batters.map(b => (
-            <option key={b.id} value={b.id}>
+            <option key={b.batterID || b.id} value={b.batterID || b.id}>
               #{b.number}{b.name ? ` - ${b.name}` : ''} ({b.hand})
             </option>
           ))}
