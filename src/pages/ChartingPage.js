@@ -199,6 +199,8 @@ function ChartingPage() {
       batterHand,
       pitchType,
       velocity: velocity ? Math.min(99, Math.max(50, parseFloat(parseFloat(velocity).toFixed(1)))) : '',
+      ballCount: currentBalls,
+      strikeCount: currentStrikes,
       zone: selectedZone,
       result: selectedResult,
       outcome: outcome
