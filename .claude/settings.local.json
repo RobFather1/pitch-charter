@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm uninstall typescript)"
+      "Bash(npm uninstall typescript)",
+      "Bash(npm install qrcode.react)"
     ]
   }
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const API_URL = process.env.REACT_APP_API_URL || "https://hhr6e3yl4b.execute-api.us-east-2.amazonaws.com/prod";
@@ -19,6 +19,15 @@ function GameSetupPage() {
   const [joinGameID, setJoinGameID] = useState('');
   const [joinError, setJoinError] = useState('');
   const [joining, setJoining] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const join = params.get('join');
+    if (join) {
+      setMode('join');
+      setJoinGameID(join);
+    }
+  }, []);
 
   const handleStartGame = async () => {
     if (!gameDate || !gameNumber) {

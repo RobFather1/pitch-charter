@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import StrikeZone from '../components/StrikeZone';
 import { safeParseJSON, safeSetItem } from '../utils/storage';
+import { QRCodeSVG } from 'qrcode.react';
 
 const API_URL = process.env.REACT_APP_API_URL || "https://hhr6e3yl4b.execute-api.us-east-2.amazonaws.com/prod";
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
@@ -33,6 +34,7 @@ function ChartingPage() {
   const [saving, setSaving] = useState(false);
   const [loadError, setLoadError] = useState(false);
   const [cloudPitchCount, setCloudPitchCount] = useState(0);
+  const [showQR, setShowQR] = useState(false);
 
   const savePitch = async (pitch) => {
     try {
@@ -302,6 +304,46 @@ function ChartingPage() {
           {gameInfo.opponent && <span>vs {gameInfo.opponent}</span>}
           <span>Game {gameInfo.gameNumber}</span>
           <span>Pitches: {pitches.length}</span>
+          <span onClick={() => setShowQR(true)} style={{ cursor: 'pointer', textDecoration: 'underline' }}>📲 Share</span>
+        </div>
+      )}
+
+      {/* QR Share Modal */}
+      {showQR && (
+        <div
+          onClick={() => setShowQR(false)}
+          style={{
+            position: 'fixed', inset: 0,
+            backgroundColor: 'rgba(0,0,0,0.6)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            zIndex: 1000
+          }}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{
+              backgroundColor: 'white',
+              borderRadius: '12px',
+              padding: '24px',
+              textAlign: 'center',
+              maxWidth: '300px',
+              width: '90%'
+            }}
+          >
+            <div style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '12px', color: '#1a3a5c' }}>
+              Game ID: {gameInfo.gameID || `${gameInfo.gameDate}-G${gameInfo.gameNumber}`}
+            </div>
+            <QRCodeSVG
+              value={`https://main.dk60tddef2ruv.amplifyapp.com/?join=${gameInfo.gameID || `${gameInfo.gameDate}-G${gameInfo.gameNumber}`}`}
+              size={220}
+            />
+            <div style={{ fontSize: '13px', color: '#555', margin: '12px 0' }}>
+              Scan with your phone camera to join this game
+            </div>
+            <button className="btn-secondary" onClick={() => setShowQR(false)}>
+              Close
+            </button>
+          </div>
         </div>
       )}
 
