@@ -4,9 +4,13 @@ A baseball pitch tracking and charting web application built with React. Designe
 
 ![Charting Page](public/Charting_Screenshot.jpg)
 
+## User Guide
+
+Full usage documentation: [Pitch Charter User Guide](https://docs.google.com/document/d/13gRViZNa_UvMhd9EnTp7eT2M4PkGajw8nG4qbGHiJQ4/edit?usp=sharing)
+
 ## Features
 
-- **Game Setup** — Start a session by entering the game date and game number (1, 2, or 3)
+- **Game Setup** — Start a new session by entering the game date and game number, or join an existing session by Game ID
 - **Interactive Strike Zone** — Click a 5×5 zone grid to log pitch location; zones automatically classify as strike or ball
 - **Pitch Logging** — Record pitcher, batter, pitch type (FB/CV/SL/CH), velocity, zone, and outcome per pitch
 - **Live Count Tracking** — Visual ball and strike counters update with each logged pitch
@@ -17,6 +21,8 @@ A baseball pitch tracking and charting web application built with React. Designe
 - **Game Summary** — View pitch, strike, and ball totals broken down by pitcher and inning
 - **Dark Mode** — Toggle between light and dark themes; preference is saved across sessions
 - **AWS Backend** — Pitches are synced to an AWS Lambda/API Gateway endpoint for cloud persistence
+- **Join Game** — Re-join an existing game session by entering a Game ID to resume or view live pitch data
+- **Share / QR Code** — Generate a QR code from the charting screen that deep-links others directly into a game session
 
 ## Tech Stack
 
@@ -75,9 +81,10 @@ Output is placed in the `build/` folder.
 ## Usage
 
 1. **Roster** — Navigate to the Roster page and add your pitchers with jersey numbers before the game.
-2. **Game Setup** — On the home page, enter the game date and game number, then click **Start Charting**.
+2. **Game Setup** — On the home page, either enter the game date and game number and click **Start Charting**, or switch to **Join Game** and enter a Game ID to re-join an existing session. Opening a shared QR link automatically pre-fills the Join Game form.
 3. **Charting** — Select the inning, pitcher, and batter. Click a zone on the strike zone grid, choose the pitch type, enter velocity, select the outcome, and click **Log Pitch**.
-4. **Export** — Navigate to the Export page to view game summary stats and download a CSV of all pitches.
+4. **Share** — Tap **📲 Share** in the info bar at the top of the Charting page to display a QR code. Others can scan it to join the same game session on their device.
+5. **Export** — Navigate to the Export page to view game summary stats and download a CSV of all pitches.
 
 ## CSV Export Columns
 
