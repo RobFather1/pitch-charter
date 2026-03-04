@@ -41,7 +41,7 @@ function RosterPage() {
       return;
     }
     const isDuplicate = pitchers.some(
-      p => p.number === String(jerseyNum) && p.id !== editingId
+      p => p.number === String(jerseyNum) && (p.pitcherID || p.id) !== editingId
     );
     if (isDuplicate) {
       alert(`Jersey #${jerseyNum} is already in the roster.`);
@@ -51,7 +51,7 @@ function RosterPage() {
     let syncId;
     if (editingId !== null) {
       const updated = pitchers.map(p =>
-        p.id === editingId ? { ...p, name: trimmedName, number } : p
+        (p.pitcherID || p.id) === editingId ? { ...p, name: trimmedName, number } : p
       );
       savePitchers(updated);
       syncId = editingId;
@@ -79,12 +79,12 @@ function RosterPage() {
   const handleEdit = (pitcher) => {
     setName(pitcher.name);
     setNumber(pitcher.number);
-    setEditingId(pitcher.id);
+    setEditingId(pitcher.pitcherID || pitcher.id);
   };
 
   const handleDelete = (id) => {
     if (window.confirm('Delete this pitcher?')) {
-      savePitchers(pitchers.filter(p => p.id !== id));
+      savePitchers(pitchers.filter(p => (p.pitcherID || p.id) !== id));
       fetch(`${API_URL}/roster`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
@@ -113,13 +113,13 @@ function RosterPage() {
           {pitchers
             .sort((a, b) => Number(a.number) - Number(b.number))
             .map(pitcher => (
-              <div key={pitcher.id} style={{
+              <div key={pitcher.pitcherID || pitcher.id} style={{
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 padding: '12px',
                 borderBottom: '1px solid var(--border-light)',
-                backgroundColor: editingId === pitcher.id ? 'var(--roster-editing-bg)' : 'var(--app-bg)'
+                backgroundColor: editingId === (pitcher.pitcherID || pitcher.id) ? 'var(--roster-editing-bg)' : 'var(--app-bg)'
               }}>
                 <span style={{ fontSize: '16px' }}>
                   #{pitcher.number} — {pitcher.name}
@@ -133,7 +133,7 @@ function RosterPage() {
                   </button>
                   <button
                     className="btn-danger"
-                    onClick={() => handleDelete(pitcher.id)}
+                    onClick={() => handleDelete(pitcher.pitcherID || pitcher.id)}
                   >
                     Delete
                   </button>
