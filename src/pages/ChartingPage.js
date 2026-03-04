@@ -29,6 +29,7 @@ function ChartingPage() {
   const [newBatterName, setNewBatterName] = useState('');
   const [newBatterHand, setNewBatterHand] = useState('RHH');
   const [batters, setBatters] = useState([]);
+  const [battersFetching, setBattersFetching] = useState(true);
   const [saving, setSaving] = useState(false);
   const [loadError, setLoadError] = useState(false);
   const [cloudPitchCount, setCloudPitchCount] = useState(0);
@@ -115,6 +116,7 @@ function ChartingPage() {
         }
       });
 
+    setBattersFetching(true);
     fetch(`${API_URL}/batters?gameID=${gameId}`, { signal: controller.signal })
       .then(res => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -124,11 +126,10 @@ function ChartingPage() {
         console.log("Batters raw response:", JSON.stringify(data));
         console.log("Is array:", Array.isArray(data));
         const list = Array.isArray(data) ? data : (data?.batters ?? data?.items ?? []);
-        if (list.length > 0) {
-          console.log("Batters loaded from cloud:", list);
-          setBatters(list);
-          safeSetItem('currentBatters', JSON.stringify(list));
-        }
+        console.log("Batters loaded from cloud:", list);
+        setBatters(list);
+        safeSetItem('currentBatters', JSON.stringify(list));
+        setBattersFetching(false);
       })
       .catch(err => {
         if (err.name === 'AbortError') return;
@@ -137,6 +138,7 @@ function ChartingPage() {
         if (savedBatters) {
           setBatters(safeParseJSON(savedBatters, []));
         }
+        setBattersFetching(false);
       });
 
     return () => controller.abort();
@@ -279,6 +281,8 @@ function ChartingPage() {
     }
   };
 
+  console.log('Render — batters at render time:', batters.length, batters);
+
   return (
     <div className="page">
 
@@ -347,14 +351,18 @@ function ChartingPage() {
         <select
           value={batterNumber ? (b => b ? (b.batterID || b.id).toString() : '')(batters.find(b => b.number === batterNumber)) : ''}
           onChange={e => handleBatterSelect(e.target.value)}
+          disabled={battersFetching}
         >
-          <option value="">-- Select or Add Batter --</option>
-          {batters.map(b => (
+          {battersFetching
+            ? <option value="">Loading batters…</option>
+            : <option value="">-- Select or Add Batter --</option>
+          }
+          {!battersFetching && batters.map(b => (
             <option key={b.batterID || b.id} value={b.batterID || b.id}>
               #{b.number}{b.name ? ` - ${b.name}` : ''} ({b.hand})
             </option>
           ))}
-          <option value="new">➕ Add New Batter</option>
+          {!battersFetching && <option value="new">➕ Add New Batter</option>}
         </select>
       </div>
 
