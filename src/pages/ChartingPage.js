@@ -121,9 +121,13 @@ function ChartingPage() {
         return res.json();
       })
       .then(data => {
-        if (Array.isArray(data)) {
-          setBatters(data);
-          safeSetItem('currentBatters', JSON.stringify(data));
+        console.log("Batters raw response:", JSON.stringify(data));
+        console.log("Is array:", Array.isArray(data));
+        const list = Array.isArray(data) ? data : (data?.batters ?? data?.items ?? []);
+        if (list.length > 0) {
+          console.log("Batters loaded from cloud:", list);
+          setBatters(list);
+          safeSetItem('currentBatters', JSON.stringify(list));
         }
       })
       .catch(err => {
